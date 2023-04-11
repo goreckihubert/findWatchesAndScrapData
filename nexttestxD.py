@@ -8,10 +8,14 @@ response = requests.get(url)
 soup = BeautifulSoup(response.content, 'html.parser')
 
 panel_attr = soup.find_all('div', {'class': 'atr'})
+# print(panel_attr)
 
 data = {}
 for el in panel_attr:
-    data[el.find('span', {'class': 'nazwa_grupy'}).text.strip()] = el.find('span', {'class': 'nazwa'}).text.strip()
+    nazwy_gr = el.find_all('span', {'class': 'nazwa_grupy'})
+    nazwy = el.find_all('span', {'class': 'nazwa'})
+    for nazwa_gr, nazwa in zip(nazwy_gr, nazwy):
+        data[nazwa_gr.text.strip()] = nazwa.text.strip()
 code = soup.find('span', {'class': 'model'}).text.strip()
 gender = soup.find('span', {'class': 'main'}).text.strip()
 if gender.__contains__("męski"):

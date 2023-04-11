@@ -1,15 +1,20 @@
-from bs4 import BeautifulSoup
+import csv
 import requests
+from bs4 import BeautifulSoup
 
-# parse the HTML
 url = "https://www.zegarek.net/zegarki-tommy-hilfiger/zegarek-1792024"
-r = requests.get(url)
-soup = BeautifulSoup(r.content, 'html.parser')
 
-# find the element containing the required information
+response = requests.get(url)
+soup = BeautifulSoup(response.content, 'html.parser')
+
 panel_attr = soup.find_all('div', {'class': 'atr'})
-print(len(panel_attr))
+# print(panel_attr)
+
+data = {}
 for el in panel_attr:
-    tag = el.find('strong', {'class': 'nazwa_interfejsu'})
-    if tag is not None:
-        print(tag.text.strip())
+    nazwy_gr = el.find_all('span', {'class': 'nazwa_grupy'})
+    nazwa = el.find_all('span', {'class': 'nazwa'})
+    for nazwa_gr, nazwa_el in zip(nazwy_gr, nazwa):
+        data[nazwa_gr.text.strip()] = nazwa_el.text.strip()
+
+print(data)
